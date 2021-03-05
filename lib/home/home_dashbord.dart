@@ -22,41 +22,16 @@ class _HomeDashbord extends State<HomeDashbord>
 
   File _image = null;
 
-
-
-
   var picker = ImagePicker();
   _imgFromGallery() async{
 
    try{
-     // FilePickerResult result = await FilePicker.platform.pickFiles();
-     //
-     // if(result != null) {
-     //   File file = File(result.files.single.path);
-     //   setState(() {
-     //     _image = file;
-     //
-     //
-     //   });
-     // } else {
-     //   // User canceled the picker
-     // }
-
-
      File image = await ImagePicker.pickImage(
          source: ImageSource.gallery, imageQuality: 50
      );
-
      setState(() {
        _image = image;
      });
-     //
-     // setState(() {
-     //   image.whenComplete(() => _image.then((value){
-     //
-     //     image = value as Future<File>;
-     //   }));
-     // });
    }
    catch(e)
     {
@@ -73,7 +48,6 @@ class _HomeDashbord extends State<HomeDashbord>
       _image = image;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     _widgetOptions = <Widget>[
@@ -85,28 +59,10 @@ class _HomeDashbord extends State<HomeDashbord>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        // shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(18.0),
-        //     side: BorderSide(color: Colors.red)
-        // ),
+
         backgroundColor:Color.fromRGBO(0,0,102,1),
         elevation:14.0,
-        // borderRadius: BorderRadius.circular(12.0),
-        // title: Text("Menu",
-        //   style: TextStyle(
-        //       fontFamily: 'Newsreader',
-        //        fontWeight: FontWeight.bold),),
-
-        // shadowColor: Colors.pink,
-        // leading: GestureDetector(
-        //   onTap: () { /* Write listener code here */ },
-        //   child: Icon(
-        //     CupertinoIcons.chevron_left_circle_fill,
-        //     size: 26.0,
-        //     color: Colors.white,// add custom icons also
-        //   ),
-        // ),
-
+        
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.notifications_rounded),
