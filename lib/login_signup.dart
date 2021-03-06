@@ -1,4 +1,9 @@
 
+import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify.dart';
+
+import 'package:crash_company_vendor/amplifyconfiguration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +15,6 @@ class LoginSignup extends StatefulWidget{
 
 class _LoginSignup extends State<LoginSignup>
 {
-
 
   TextEditingController _editingController;
   ScrollController _scrollController;
@@ -24,9 +28,7 @@ class _LoginSignup extends State<LoginSignup>
           child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
 
-            ),
             child: Stack(
              children: [
                Container(
@@ -128,6 +130,7 @@ class _LoginSignup extends State<LoginSignup>
   List<DropdownMenuItem<Country>> _dropdownMenuItems;
   Country _selectedCompany;
   final _formKey = GlobalKey<FormState>();
+  bool _amplifyConfigured = false;
 
   @override
   void initState() {
@@ -136,6 +139,9 @@ class _LoginSignup extends State<LoginSignup>
     _editingController = new TextEditingController();
     _dropdownMenuItems = buildDropdownMenuItems(_companies);
     _selectedCompany = _dropdownMenuItems[0].value;
+
+    _configureAmplify();
+
     super.initState();
   }
 
@@ -178,23 +184,43 @@ class _LoginSignup extends State<LoginSignup>
     );
   }
 
-  // final firestoreInstance = Firestore.instance;
-  //
-  // void pushData() {
-  //   firestoreInstance.collection("users").add(
-  //       {
-  //         "name" : "john",
-  //         "age" : 50,
-  //         "email" : "example@example.com",
-  //         "address" : {
-  //           "street" : "street 24",
-  //           "city" : "new york"
-  //         }
-  //       }).then((value){
-  //     print(value.documentID);
-  //   });
-  //}
 
+  void _configureAmplify() async {
+    if (!mounted) return;
+
+    // Add Pinpoint and Cognito Plugins
+    Amplify.addPlugin(AmplifyAnalyticsPinpoint());
+    Amplify.addPlugin(AmplifyAuthCognito());
+
+    // Add this line, to include the Auth plugin.
+    Amplify.addPlugin(AmplifyAuthCognito());
+
+    // Once Plugins are added, configure Amplify
+    // Note: Amplify can only be configured once.
+    try {
+      await Amplify.configure(amplifyconfig);
+    } on AmplifyAlreadyConfiguredException {
+      print("Amplify was already configured. Was the app restarted?");
+    }
+    try {
+      setState(() {
+        _amplifyConfigured = true;
+      });
+    } catch (e) {
+      print(e);
+    }
+
+  }
+
+  // Send an event to Pinpoint
+  void _recordEvent() async {
+    AnalyticsEvent event = AnalyticsEvent('test');
+    event.properties.addBoolProperty('boolKey', true);
+    event.properties.addDoubleProperty('doubleKey', 10.0);
+    event.properties.addIntProperty('intKey', 10);
+    event.properties.addStringProperty('stringKey', 'stringValue');
+    Amplify.Analytics.recordEvent(event: event);
+  }
 }
 
 class Country {
@@ -210,6 +236,7 @@ class Country {
       Country(91, '+91',"IND"),
     ];
   }
+
 
 }
 
